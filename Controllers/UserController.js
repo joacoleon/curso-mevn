@@ -37,9 +37,9 @@ export default {
             const reg = await Models.User.create(req.body);
             res.status(200).json(reg);
         } catch (e) {
-            res.status(500).send({
+            /* res.status(500).send({
                 message: 'An error occurred'
-            });
+            }); */
             next(e);
         }
     },

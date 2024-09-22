@@ -5,6 +5,7 @@ import Auth from "../Middlewares/Auth"
 const router = routerx();
 const controller = IdentificationTypeController;
 
+//TODO -> Revisar si tiene sentido tener algunos de estos endpoints para Category, IdentificationType, PersonType y UserType
 router.post('/add', Auth.isAdmin, controller.add);
 router.get('/query', Auth.isAdmin, controller.query);
 router.get('/list', Auth.isAdmin, controller.list);

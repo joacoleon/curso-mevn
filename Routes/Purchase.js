@@ -1,16 +1,13 @@
 import routerx from "express-promise-router";
-import ItemController from "../Controllers/ItemController";
-import Auth from "../Middlewares/Auth";
+import PurchaseController from "../Controllers/PurchaseController";
+import Auth from "../Middlewares/Auth"
 
 const router = routerx();
-const controller = ItemController;
+const controller = PurchaseController;
 
 router.post('/add', Auth.isStorage, controller.add);
 router.get('/query', Auth.isStorage, controller.query);
-router.get('/queryByCode', Auth.isUser, controller.queryByCode);
 router.get('/list', Auth.isStorage, controller.list);
-router.put('/update', Auth.isStorage, controller.update);
-router.delete('/remove', Auth.isStorage, controller.remove);
 router.put('/activate', Auth.isStorage, controller.activate);
 router.put('/deactivate', Auth.isStorage, controller.deactivate);
 

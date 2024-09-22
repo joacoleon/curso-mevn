@@ -5,6 +5,8 @@ import Person from "./Person";
 import PersonType from "./PersonType";
 import UserType from "./UserType";
 import IdentificationType from "./IdentificationType";
+import Purchase from "./Purchase";
+import Sell from "./Sell"
 
 export default {
     Category,
@@ -13,5 +15,7 @@ export default {
     Person,
     PersonType,
     UserType,
-    IdentificationType
+    IdentificationType,
+    Purchase,
+    Sell
 }

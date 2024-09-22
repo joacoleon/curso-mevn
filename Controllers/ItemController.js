@@ -28,6 +28,22 @@ export default {
         }
     },
 
+    queryByCode: async (req, res, next) => {
+        try {
+            const reg = await Models.Item.findOne({ code: req.query.code })
+                .populate('category', { name: 1 }); //Hago referencia a categoria y muestro solo el nombre;
+            if (!reg) {
+                res.status(404).send({
+                    message: 'Not found'
+                })
+            } else {
+                res.status(200).json(reg);
+            }
+        } catch (e) {
+            next(e);
+        }
+    },
+
     list: async (req, res, next) => {
         try {
             let value = req.query.value;
