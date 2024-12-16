@@ -11,22 +11,19 @@ export default {
             if (userForLogin) {
                 let passwordsMatch = await bcrypt.compare(req.body.password, userForLogin.password);
                 if (passwordsMatch) {
-                    let userToken = await TokenService.encode(userForLogin._id);
+                    let userToken = await TokenService.encode(userForLogin._id, userForLogin.email, userForLogin.role);
                     res.status(200).json({ userForLogin, userToken });
                 } else {
                     res.status(404).send({
-                        message: 'Incorrect user or password' //Aca es incorrect password pero es mas seguro no especificar
+                        message: 'Incorrect user or password.' //Aca es incorrect password pero es mas seguro no especificar
                     })
                 }
             } else {
                 res.status(404).send({
-                    message: 'Incorrect user or password' //Aca es incorrect user pero es mas seguro no especificar
+                    message: 'Incorrect user or password.' //Aca es incorrect user pero es mas seguro no especificar
                 });
             }
         } catch (e) {
-            res.status(500).send({
-                message: 'An error occurred'
-            });
             next(e);
         }
     },
@@ -37,29 +34,33 @@ export default {
             const reg = await Models.User.create(req.body);
             res.status(200).json(reg);
         } catch (e) {
-            /* res.status(500).send({
-                message: 'An error occurred'
-            }); */
             next(e);
         }
     },
 
     query: async (req, res, next) => {
         try {
-            const reg = await Models.User.findOne({ _id: req.query._id })
-                .populate('role')
-                .populate('id_type', { identificationTypeDescription: 1 });
-            if (!reg) {
-                res.status(404).send({
-                    message: 'Not found'
-                })
+            if (req.query._id.match(/^[0-9a-fA-F]{24}$/)) { //Pregunto si es un id valido para evitar error
+                const reg = await Models.User.findOne({ _id: req.query._id })
+                    .populate('role')
+                    .populate('id_type', { identificationTypeDescription: 1 });
+                if (!reg) {
+                    res.status(200).send({
+                        success: false,
+                        code: 204,
+                        message: 'User not found'
+                    })
+                } else {
+                    res.status(200).json(reg);
+                }
             } else {
-                res.status(200).json(reg);
+                res.status(404).send({
+                    success: false,
+                    code: 404,
+                    message: 'Invalid user id'
+                })
             }
         } catch (e) {
-            req.status(500).send({
-                message: 'An error occurred'
-            });
             next(e);
         }
     },
@@ -71,11 +72,8 @@ export default {
                 .populate('role')
                 .populate('id_type', { identificationTypeDescription: 1 })
                 .sort({ 'createdAt': -1 }); //Ordenado por fecha de creacion desc
-            res.status(200).json({ result: 'OK', data: reg })
+            res.status(200).json(reg);
         } catch (e) {
-            req.status(500).send({
-                message: 'An error occurred'
-            });
             next(e);
         }
     },
@@ -91,9 +89,6 @@ export default {
             const reg = await Models.User.findByIdAndUpdate({ _id: req.body._id }, { role: req.body.role, name: req.body.name, id_type: req.body.id_type, id_number: req.body.id_number, address: req.body.address, phone: req.body.phone, email: req.body.email, password: req.body.password });
             res.status(200).json(reg);
         } catch (e) {
-            req.status(500).send({
-                message: 'An error occurred'
-            });
             next(e);
         }
     },
@@ -103,9 +98,6 @@ export default {
             const reg = await Models.User.findByIdAndDelete({ _id: req.body._id });
             res.status(200).json(reg);
         } catch (e) {
-            req.status(500).send({
-                message: 'An error occurred'
-            });
             next(e);
         }
     },
@@ -115,9 +107,6 @@ export default {
             const reg = await Models.User.findByIdAndUpdate({ _id: req.body._id }, { status: 1 });
             res.status(200).json(reg);
         } catch (e) {
-            req.status(500).send({
-                message: 'An error occurred'
-            });
             next(e);
         }
     },
@@ -127,9 +116,6 @@ export default {
             const reg = await Models.User.findByIdAndUpdate({ _id: req.body._id }, { status: 0 });
             res.status(200).json(reg);
         } catch (e) {
-            req.status(500).send({
-                message: 'An error occurred'
-            });
             next(e);
         }
     }

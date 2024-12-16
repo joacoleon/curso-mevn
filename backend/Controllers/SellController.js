@@ -27,9 +27,6 @@ export default {
 
             res.status(200).json(reg);
         } catch (e) {
-            res.status(500).send({
-                message: 'An error occurred'
-            });
             next(e);
         }
     },
@@ -47,9 +44,6 @@ export default {
                 res.status(200).json(reg);
             }
         } catch (e) {
-            req.status(500).send({
-                message: 'An error occurred'
-            });
             next(e);
         }
     },
@@ -61,11 +55,8 @@ export default {
                 .populate('user', { name: 1 })
                 .populate('person', { name: 1 })
                 .sort({ 'createdAt': -1 }); //Ordenado por fecha de creacion desc
-            res.status(200).json({ result: 'OK', data: reg }) //TODO -> Revisar, esto no lo tengo igual que en el curso
+            res.status(200).json(reg);
         } catch (e) {
-            req.status(500).send({
-                message: 'An error occurred'
-            });
             next(e);
         }
     },
@@ -82,9 +73,6 @@ export default {
 
             res.status(200).json(reg);
         } catch (e) {
-            req.status(500).send({
-                message: 'An error occurred'
-            });
             next(e);
         }
     },
@@ -101,9 +89,6 @@ export default {
 
             res.status(200).json(reg);
         } catch (e) {
-            req.status(500).send({
-                message: 'An error occurred'
-            });
             next(e);
         }
     }

@@ -11,7 +11,10 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
-    "pinia": "^2.1.7",
+    "@fontsource/roboto": "^5.1.0",
+    "axios": "^1.7.7",
+    "jwt-decode": "^4.0.0",
+    "pinia": "^2.2.4",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3",
     "vuetify": "^3.7.2"
@@ -23,8 +26,8 @@
     "@vue/tsconfig": "^0.5.1",
     "npm-run-all2": "^6.2.0",
     "typescript": "~5.4.0",
+    "unplugin-fonts": "^1.1.1",
     "vite": "^5.3.1",
-    "vite-plugin-vue-devtools": "^7.3.1",
-    "vue-tsc": "^2.0.21"
+    "vue-tsc": "^2.1.6"
   }
 }

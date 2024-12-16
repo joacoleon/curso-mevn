@@ -1,0 +1,36 @@
+<template>
+    <v-navigation-drawer app color="#2B2D42" temporary>
+        <v-list v-model:selected="selected" nav>
+          <v-list-item title="Home" :to="{ name: 'home' }" value="/"></v-list-item>
+          <v-list-item title="Categories" :to="{ name: 'category' }" value="category"
+            v-if="isAdmin || isStorage"></v-list-item>
+        </v-list>
+        <template v-slot:append>
+          <div class="pa-2">
+            <v-btn variant="tonal" block @click="authStore.logout()">
+              Logout
+            </v-btn>
+          </div>
+        </template>
+      </v-navigation-drawer>
+</template>
+
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import { useAuthStore } from '@/stores/AuthStore';
+
+const authStore = useAuthStore();
+const selected = ref([]);
+
+const isAdmin = computed(() => {
+  return authStore.user && authStore.user.role.userTypeDescription == 'Admin';
+})
+
+const isSales = computed(() => {
+  return authStore.user && authStore.user.role.userTypeDescription == 'Sales';
+})
+
+const isStorage = computed(() => {
+  return authStore.user && authStore.user.role.userTypeDescription == 'Storage';
+})
+</script>

@@ -3,7 +3,7 @@ import mongoose, {Schema} from "mongoose";
 const categorySchema = new Schema({
     name: {type: String, maxlength: 50, unique: true, required: true},
     description: {type: String, maxlength: 255},
-    status: {type: Number, default: 1},
+    isActive: {type: Boolean, default: true},
     createdAt: {type: Date, default: Date.now}
 });
 

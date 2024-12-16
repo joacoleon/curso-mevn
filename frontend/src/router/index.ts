@@ -1,23 +1,67 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { useAuthStore } from '@/stores/AuthStore'
+import Login from '@/components/Login.vue'
+import Home from '@/components/Home.vue'
+import Category from '@/components/Category.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes: [
+    {
+      path: '/login',
+      name: 'login',
+      component: Login,
+      meta: {
+        all: true
+      }
+    },
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: Home,
+      meta: {
+        admin: true,
+        storage: true,
+        sales: true
+      }
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
+      path: '/category',
+      name: 'category',
+      component: Category,
+      meta: {
+        admin: true,
+        storage: true
+      }
+    },
+    {
+      path: '/:pathMatch(.*)', //TODO -> Ver de agregar una pantalla indicando que la pagina no existe
+      redirect: '/'
     }
   ]
+})
+
+router.beforeEach(async (to, from, next) => {
+  const authStore = useAuthStore();
+  authStore.overlay = false; //Si cambio de pantalla cuando se estaba llamando un servicio, saco el overlay
+
+  if (to.matched.some(record => record.meta.all)) {
+    next();
+  } else if (authStore.user && authStore.user.role.userTypeDescription == 'Admin') {
+    if (to.matched.some(record => record.meta.admin)) {
+      next();
+    }
+  } else if (authStore.user && authStore.user.role.userTypeDescription == 'Sales') {
+    if (to.matched.some(record => record.meta.sales)) {
+      next();
+    }
+  } else if (authStore.user && authStore.user.role.userTypeDescription == 'Storage') {
+    if (to.matched.some(record => record.meta.storage)) {
+      next();
+    }
+  } else {
+    next({ name: 'login' })
+  }
 })
 
 export default router

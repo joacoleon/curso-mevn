@@ -7,7 +7,6 @@ export default {
             const reg = await Models.Item.create(req.body);
             res.status(200).json(reg);
         } catch (e) {
-            //errorHandler(e, req, res);
             next(e);
         }
     },
@@ -50,7 +49,7 @@ export default {
             const reg = await Models.Item.find({ $or: [{ 'name': new RegExp(value, 'i') }, { 'description': new RegExp(value, 'i') }] }, { createdAt: 0 }) //Buscar por nombre y descripcion ignorando mayusculas o minusculas, no mostrar createdAt
                 .populate('category', { name: 1 }) //Hago referencia a categoria y muestro solo el nombre
                 .sort({ 'createdAt': -1 }); //Ordenado por fecha de creacion desc
-            res.status(200).json({ result: 'OK', data: reg });
+            res.status(200).json(reg);
         } catch (e) {
             next(e);
         }

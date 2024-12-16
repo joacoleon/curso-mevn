@@ -1,66 +1,54 @@
 <template>
-  <v-app :theme="theme">
-    <v-app-bar>
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+  <v-app>
+    <div v-if="userLogged">
+      <v-app-bar app color="#FFFFFF">
+        <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+        <v-app-bar-title>MEVN APP</v-app-bar-title>
+      </v-app-bar>
+      <Footer></Footer>
+      <NavigationDrawer v-model="drawer"></NavigationDrawer>
+    </div>
 
-      <v-app-bar-title>MEVN APP</v-app-bar-title>
-      <v-btn
-          :icon="theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"
-          slim
-          @click="onClick"
-        ></v-btn>
-    </v-app-bar>
-
-    <v-navigation-drawer
-      v-model="drawer"
-      temporary
-    >
-      <!--  -->
-    </v-navigation-drawer>
-
-    <v-main >
-      <v-container>
-        <v-row>
-          <template v-for="n in 4" :key="n">
-            <v-col
-              class="mt-2"
-              cols="12"
-            >
-              <strong>Category {{ n }}</strong>
-            </v-col>
-
-            <v-col
-              v-for="j in 6"
-              :key="`${n}${j}`"
-              cols="6"
-              md="2"
-            >
-              <v-card height="150">asd</v-card>
-            </v-col>
-          </template>
-        </v-row>
-      </v-container>
+    <v-main app>
+      <RouterView />
     </v-main>
+
+    <FeedbackSnackbar :snackbar="snackbarStore.snackbar"></FeedbackSnackbar> 
   </v-app>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { RouterView } from 'vue-router'
+import { useAuthStore } from './stores/AuthStore';
+import { useSnackbarStore } from './stores/SnackbarStore';
+import NavigationDrawer from './components/TheNavigationDrawer.vue';
+import Footer from './components/TheFooter.vue';
+import FeedbackSnackbar from './components/TheFeedbackSnackbar.vue';
 
-  const drawer = ref(false);
-  const theme = ref('light');
+// #region VARIABLES
+const authStore = useAuthStore();
+const snackbarStore = useSnackbarStore();
+const drawer = ref(false);
+// #endregion
 
-  function onClick () {
-    theme.value = theme.value === 'light' ? 'dark' : 'light';
-  }
+// #region CREATED
+init();
+// #endregion
+
+// #region METHODS
+function init() {
+  authStore.autoLogin();
+}
+// #endregion
+
+// #region COMPUTED
+const userLogged = computed(() => {
+  return authStore.user;
+})
+// #endregion
 </script>
 
-<script lang="ts">
-  export default {
-    data: () => ({ drawer: false }),
-  }
-</script>
-
-<style scoped>
+<style>
 
 </style>

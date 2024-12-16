@@ -27,11 +27,11 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', router);
-app.use((req, res, next)=>{
+app.use((req, res, next)=>{ //Un 404 no es un error para node, por eso hay que capturarlo aca y no en el errorHandler
     res.status(404).send({
         success: false,
         code: 404,
-        message:"Invalid endpoint!"
+        message:"Invalid endpoint"
     });
   });
 app.use(errorHandler);

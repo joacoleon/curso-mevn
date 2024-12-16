@@ -1,33 +1,35 @@
 const errorHandler = (err, req, res, next) => {
-    let error = {...err};
+    let error = { ...err };
     error.message = err.message;
     error.name = err.name;
 
+    console.log(error.statusCode);
+
     let message;
 
-    if (err.name === 'CastError'){
-        message = "Resource not found";
-        error = errorResponseHelper(message, 404);
+    if (err.name === 'TypeError' || err.name === 'CastError') {
+        message = "Invalid request";
+        error = errorResponseHelper(message, 400); //BAD REQUEST
     }
 
-    if (err.code === 11000){
-        message = "Duplicate field value entered";
+    if (err.code === 11000) {
+        message = "At least one unique field already exist in another document"; //CUANDO TRATO DE CREAR UN USUARIO CON NAME Y/O EMAIL QUE YA TIENE OTRO USUARIO
         error = errorResponseHelper(message, 400);
     }
 
-    if  (err.name === 'ValidationError'){
+    if (err.name === 'ValidationError') {
         message = Object.values(err.errors).map(value => value.message);
         error = errorResponseHelper(message, 400);
     }
 
     res.status(error.statusCode || 500).json({
         success: false,
-        code: error.statusCode,
+        code: error.statusCode || 500,
         message: error.message || "Server error!"
     })
 }
 
-function errorResponseHelper(message, statusCode){
+function errorResponseHelper(message, statusCode) {
     let error = {
         statusCode: statusCode,
         message: message

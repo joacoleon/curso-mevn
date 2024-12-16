@@ -25,8 +25,8 @@ async function checkToken(token) { //Repasar esto
 }
 
 export default {
-    encode: async (_id) => {
-        const token = jwt.sign({ _id: _id }, clientSecret, { expiresIn: '1d' });
+    encode: async (_id, email, role) => {
+        const token = jwt.sign({ _id: _id, email: email, role: role }, clientSecret, { expiresIn: '1d' });
         return token;
     },
 
