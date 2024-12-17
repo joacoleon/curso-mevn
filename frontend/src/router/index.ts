@@ -3,6 +3,8 @@ import { useAuthStore } from '@/stores/AuthStore'
 import Login from '@/components/Login.vue'
 import Home from '@/components/Home.vue'
 import Category from '@/components/Category.vue'
+import User from '@/components/User.vue'
+import PageNotFound from '@/components/PageNotFound.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -35,15 +37,27 @@ const router = createRouter({
       }
     },
     {
+      path: '/user',
+      name: 'user',
+      component: User,
+      meta: {
+        admin: true
+      }
+    },
+    {
       path: '/:pathMatch(.*)', //TODO -> Ver de agregar una pantalla indicando que la pagina no existe
-      redirect: '/'
+      name: '404',
+      component: PageNotFound,
+      meta: {
+        all: true
+      }
     }
   ]
 })
 
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
-  authStore.overlay = false; //Si cambio de pantalla cuando se estaba llamando un servicio, saco el overlay
+  //authStore.overlay = false; //Si cambio de pantalla cuando se estaba llamando un servicio, saco el overlay
 
   if (to.matched.some(record => record.meta.all)) {
     next();

@@ -9,7 +9,7 @@ const userSchema = new Schema({
     phone: {type: String, maxlength: 20},
     email: {type: String, maxlength: 50, unique: true, required: true},
     password: {type: String, maxlength: 64, required: true},
-    status: {type: Number, default: 1},
+    isActive: {type: Boolean, default: true},
     createdAt: {type: Date, default: Date.now}
 });
 

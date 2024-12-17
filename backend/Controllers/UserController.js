@@ -104,7 +104,7 @@ export default {
 
     activate: async (req, res, next) => {
         try {
-            const reg = await Models.User.findByIdAndUpdate({ _id: req.body._id }, { status: 1 });
+            const reg = await Models.User.findByIdAndUpdate({ _id: req.body._id }, { isActive: true });
             res.status(200).json(reg);
         } catch (e) {
             next(e);
@@ -113,7 +113,7 @@ export default {
 
     deactivate: async (req, res, next) => {
         try {
-            const reg = await Models.User.findByIdAndUpdate({ _id: req.body._id }, { status: 0 });
+            const reg = await Models.User.findByIdAndUpdate({ _id: req.body._id }, { isActive: false });
             res.status(200).json(reg);
         } catch (e) {
             next(e);

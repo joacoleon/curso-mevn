@@ -4,6 +4,8 @@
           <v-list-item title="Home" :to="{ name: 'home' }" value="/"></v-list-item>
           <v-list-item title="Categories" :to="{ name: 'category' }" value="category"
             v-if="isAdmin || isStorage"></v-list-item>
+            <v-list-item title="Users" :to="{ name: 'user' }" value="user"
+            v-if="isAdmin"></v-list-item>
         </v-list>
         <template v-slot:append>
           <div class="pa-2">
