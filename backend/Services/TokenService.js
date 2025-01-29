@@ -30,7 +30,7 @@ export default {
         return token;
     },
 
-    async decode(token) {
+    decode: async (token) => {
         try {
             const { _id } = await jwt.verify(token, clientSecret); //Para obtener solo el id, si no tendria que guardar el objeto completo y en otra propiedad el id (comentado abajo)
             const user = await Models.User.findOne({ _id, isActive: true })
@@ -49,6 +49,7 @@ export default {
             //El token expiro entonces entra en el catch, donde se renueva. Esta bien que se renueve?
             //const newToken = await checkToken(token);
             //return newToken;
+            throw e;
         }
     }
 }
