@@ -3,17 +3,15 @@ import Models from '../Models';
 
 const clientSecret = "chapuCataNegrita";
 
-async function checkToken(token) { //Repasar esto
-    let __id = null;
+async function checkToken(token) {
     try {
         const { _id } = await jwt.decode(token); //Obtengo el id de usuario del token
-        __id = _id;
 
-        const user = await Models.User.findOne({ _id: __id, isActive: true })
+        const user = await Models.User.findOne({ _id, isActive: true })
             .populate('role'); //Busco el usuario por id, validando que este activo
 
         if (user) { //Si lo obtengo
-            const token = jwt.sign({ _id: __id }, clientSecret, { expiresIn: '24h' }); //Renuevo el token
+            const token = jwt.sign({ _id }, clientSecret, { expiresIn: '24h' }); //Renuevo el token
             return { token, role: user.role.userTypeCode }; //Devuelvo el token y rol
         } else {
             return false;
