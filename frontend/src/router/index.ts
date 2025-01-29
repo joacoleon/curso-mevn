@@ -65,41 +65,48 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach(async (to, from, next) => { // TODO -> Allow all users to change their passwords
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
+
+  // Allow access to routes with 'meta.all' set (public routes like login, 404, etc.)
   if (to.matched.some(record => record.meta.all)) {
-    next();
-  } else if (authStore.user) {
-    if (authStore.user.hasDefaultPassword) {
-      if (to.matched.some(record => record.meta.changePassword)) {
-        next();
-      } else {
-        next({ name: 'changePassword' })
-      }
-    } else {
-      if (authStore.user.role.userTypeDescription == 'Admin') {
-        if (to.matched.some(record => record.meta.admin)) {
-          next();
-        } else {
-          next({ name: '404' })
-        }
-      } else if (authStore.user.role.userTypeDescription == 'Sales') {
-        if (to.matched.some(record => record.meta.sales)) {
-          next();
-        } else {
-          next({ name: '404' })
-        }
-      } else if (authStore.user.role.userTypeDescription == 'Storage') {
-        if (to.matched.some(record => record.meta.storage)) {
-          next();
-        } else {
-          next({ name: '404' })
-        }
-      }
-    }
-  } else {
-    next({ name: 'login' })
+    return next();
   }
-})
+
+  if (authStore.user) {
+    // Allow all authenticated users to access the changePassword route
+    if (to.name === 'changePassword') {
+      return next(); // Allow user to visit the changePassword route
+    }
+
+    // If the user has a default password, redirect them to change password page
+    if (authStore.user.hasDefaultPassword) {
+      return next({ name: 'changePassword' });
+    }
+
+    // Define a mapping for roles to required meta properties
+    const roleRouteMap = {
+      'Admin': 'admin',
+      'Sales': 'sales',
+      'Storage': 'storage',
+    };
+
+    const userRole = authStore.user.role.userTypeDescription as keyof typeof roleRouteMap;
+
+    // Check if the user role has a corresponding route and meta permissions
+    if (roleRouteMap[userRole]) {
+      return to.matched.some(record => record.meta[roleRouteMap[userRole]])
+        ? next()
+        : next({ name: '404' });
+    }
+
+    // If no matching role found, redirect to a 404 page
+    return next({ name: '404' });
+  }
+
+  // If the user is not authenticated, redirect to the login page
+  next({ name: 'login' });
+});
+
 
 export default router
