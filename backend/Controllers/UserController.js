@@ -5,9 +5,8 @@ import TokenService from '../Services/TokenService';
 export default {
     login: async (req, res, next) => {
         try {
-            let userForLogin = await Models.User.findOne({ email: req.body.email, status: 1 })
+            let userForLogin = await Models.User.findOne({ email: req.body.email, isActive: true })
                 .populate('role'); //Busco el usuario por id, validando que este activo
-
             if (userForLogin) {
                 let passwordsMatch = await bcrypt.compare(req.body.password, userForLogin.password);
                 if (passwordsMatch) {
@@ -30,7 +29,9 @@ export default {
 
     add: async (req, res, next) => {
         try {
-            req.body.password = await bcrypt.hash(req.body.password, 10); //Encripto la contraseña
+            let password = "0303456";
+            //req.body.password = await bcrypt.hash(req.body.password, 10); //Encripto la contraseña
+            req.body.password = await bcrypt.hash(password, 10);
             const reg = await Models.User.create(req.body);
             res.status(200).json(reg);
         } catch (e) {
@@ -78,16 +79,36 @@ export default {
         }
     },
 
-    update: async (req, res, next) => {
+    update: async (req, res, next) => { //TODO -> Revisar no cambiar el password manualmente, a lo sumo tener un check para volver al password default
         try {
-            let newPassword = req.body.password;
-            let userToUpdate = await Models.User.findOne({ _id: req.body._id });
-
-            if (newPassword != userToUpdate.password) //Si la contraseña nueva es diferente a la contraseña del usuario
-                req.body.password = await bcrypt.hash(req.body.password, 10); //Encripto la contraseña
-
-            const reg = await Models.User.findByIdAndUpdate({ _id: req.body._id }, { role: req.body.role, name: req.body.name, id_type: req.body.id_type, id_number: req.body.id_number, address: req.body.address, phone: req.body.phone, email: req.body.email, password: req.body.password });
+            if(req.body.password == "0303456") { //Si no permito editar el password en el form, esto no haria falta
+                req.body.hasDefaultPassword = true;
+            }
+            req.body.password = await bcrypt.hash(req.body.password, 10); //Encripto la contraseña
+            const reg = await Models.User.findByIdAndUpdate({ _id: req.body._id }, { role: req.body.role, name: req.body.name, id_type: req.body.id_type, id_number: req.body.id_number, address: req.body.address, phone: req.body.phone, email: req.body.email, password: req.body.password, hasDefaultPassword: req.body.hasDefaultPassword });
             res.status(200).json(reg);
+        } catch (e) {
+            next(e);
+        }
+    },
+
+    changePassword: async (req, res, next) => {
+        try {
+            const userToUpdate = await Models.User.findOne({ _id: req.body._id });
+            const isPasswordMatch = bcrypt.compareSync(req.body.password, userToUpdate.password);
+
+            if(isPasswordMatch) {
+                res.status(400).send({
+                    success: false,
+                    code: 400,
+                    message: 'Use a different password'
+                })
+            } else {
+                req.body.password = await bcrypt.hash(req.body.password, 10); //Encripto la contraseña
+                const reg = await Models.User.findByIdAndUpdate({ _id: req.body._id }, { password: req.body.password, hasDefaultPassword: false });
+                res.status(200).json(reg);
+            }
+            
         } catch (e) {
             next(e);
         }

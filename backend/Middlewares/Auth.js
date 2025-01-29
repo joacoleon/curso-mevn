@@ -26,7 +26,6 @@ export default {
             });
         } else {
             const response = await TokenService.decode(req.headers.token);
-
             if (response.role == "1") {
                 next();
             } else {
@@ -44,7 +43,6 @@ export default {
             });
         } else {
             const response = await TokenService.decode(req.headers.token);
-
             if (response.role == "1" || response.role == "3") {
                 next();
             } else {

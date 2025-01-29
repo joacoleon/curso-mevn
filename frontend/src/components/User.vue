@@ -1,186 +1,178 @@
 <template>
-    <v-container>
-        <h1>Users</h1>
-        <v-breadcrumbs :items="items">
-            <template v-slot:divider>
-                <v-icon icon="mdi-chevron-right"></v-icon>
-            </template>
-        </v-breadcrumbs>
-        <v-card>
-            <v-skeleton-loader :loading="isLoading" height="545" type="list-item, table-tbody, table-tfoot"
-                class="p-3">
-                <v-data-table :headers="headers" :items="users" :search="search"
-                    :sort-by="[{ key: 'name', order: 'asc' }]">
-                    <template v-slot:top>
-                        <v-toolbar color="#8D99AE">
-                            <v-spacer v-if="!mobile"></v-spacer>
-                            <v-text-field density="compact" base-color="#EDF2F4" variant="outlined"
-                                :class="['bg-white rounded', { 'ml-5': mobile }]" hide-details single-line
-                                append-inner-icon="mdi-magnify" v-model="search"></v-text-field>
-                            <v-spacer></v-spacer>
-                            <v-dialog v-model="dialog" max-width="500px">
-                                <template v-slot:activator="{ props }">
-                                    <v-btn color="#2B2D42" v-bind="props">
-                                        {{ mobile ? 'New' : 'New user' }}
-                                    </v-btn>
-                                </template>
-                                <v-card>
-                                    <v-form ref="userForm" v-model="userValidForm" @submit.prevent>
-                                        <v-card-title>
-                                            <span class="text-h5">{{ saveUserFormTitle }}</span>
-                                        </v-card-title>
-                                        <v-skeleton-loader :loading="isSaving"
-                                            height="263"
-                                            type="list-item@2, actions">
-                                            <v-container>
+    <v-container class="fill-height">
+        <v-card height="100%" width="100%" class="pa-5">
+            <h1>Users</h1>
+            <v-breadcrumbs :items="items">
+                <template v-slot:divider>
+                    <v-icon icon="mdi-chevron-right"></v-icon>
+                </template>
+            </v-breadcrumbs>
+            <v-card>
+                <v-skeleton-loader :loading="isLoading" height="545" type="list-item, table-tbody, table-tfoot"
+                    class="pa-3">
+                    <v-data-table :headers="headers" :items="users" :search="search"
+                        :sort-by="[{ key: 'name', order: 'asc' }]">
+                        <template v-slot:top>
+                            <v-toolbar color="#8D99AE">
+                                <v-spacer v-if="!mobile"></v-spacer>
+                                <v-text-field density="compact" base-color="#EDF2F4" variant="outlined"
+                                    :class="['bg-white rounded', { 'ml-5': mobile }]" hide-details single-line
+                                    append-inner-icon="mdi-magnify" v-model="search"></v-text-field>
+                                <v-spacer></v-spacer>
+                                <v-dialog v-model="dialog" max-width="500px">
+                                    <template v-slot:activator="{ props }">
+                                        <v-btn color="#2B2D42" v-bind="props">
+                                            {{ mobile ? 'New' : 'New user' }}
+                                        </v-btn>
+                                    </template>
+                                    <v-card>
+                                        <v-form ref="userForm" v-model="userValidForm" @submit.prevent>
+                                            <v-card-title>
+                                                <span class="text-h5">{{ saveUserFormTitle }}</span>
+                                            </v-card-title>
+                                            <v-skeleton-loader :loading="isSaving" height="263"
+                                                type="list-item@2, actions">
+                                                <v-container>
                                                     <v-row>
                                                         <v-col cols="6">
-                                                            <v-text-field v-model="selectedUser.email"
-                                                                label="Email" :rules="categoryNameRules"
-                                                                required>
+                                                            <v-text-field v-model="selectedUser.email" label="Email"
+                                                                :rules="categoryNameRules" required>
                                                             </v-text-field>
                                                         </v-col>
                                                         <v-col cols="6">
-                                                            <v-text-field v-model="selectedUser.name"
-                                                                label="Name" :rules="categoryNameRules"
-                                                                required>
+                                                            <v-text-field v-model="selectedUser.name" label="Name"
+                                                                :rules="categoryNameRules" required>
                                                             </v-text-field>
                                                         </v-col>
                                                     </v-row>
                                                     <v-row>
                                                         <v-col cols="6">
                                                             <v-select v-model="selectedUser.id_type"
-                                                                :items="userIdTypes"
-                                                                label="Id type" :rules="categoryNameRules"
+                                                                :items="userIdTypes" label="Id type"
                                                                 item-title="identificationTypeDescription"
-                                                                item-value="_id"
-                                                                required>
+                                                                item-value="_id" required>
                                                             </v-select>
                                                         </v-col>
                                                         <v-col cols="6">
                                                             <v-text-field v-model="selectedUser.id_number"
-                                                                label="Id number"
-                                                                :rules="categoryDescriptionRules">
+                                                                label="Id number" :rules="categoryDescriptionRules">
                                                             </v-text-field>
                                                         </v-col>
                                                     </v-row>
                                                     <v-row>
                                                         <v-col cols="6">
-                                                            <v-text-field v-model="selectedUser.address"
-                                                                label="Address" :rules="categoryNameRules"
-                                                                required>
+                                                            <v-text-field v-model="selectedUser.address" label="Address"
+                                                                :rules="categoryNameRules" required>
                                                             </v-text-field>
                                                         </v-col>
                                                         <v-col cols="6">
-                                                            <v-text-field v-model="selectedUser.phone"
-                                                                label="Phone" :rules="categoryNameRules"
-                                                                required>
+                                                            <v-text-field v-model="selectedUser.phone" label="Phone"
+                                                                :rules="categoryNameRules" required>
                                                             </v-text-field>
                                                         </v-col>
                                                     </v-row>
                                                     <v-row>
                                                         <v-col cols="12">
-                                                            <v-select v-model="selectedUser.role"
-                                                                :items="userTypes"
-                                                                label="Role" :rules="categoryNameRules"
-                                                                item-title="userTypeDescription"
-                                                                item-value="_id"
+                                                            <v-select v-model="selectedUser.role" :items="userTypes"
+                                                                label="Role"
+                                                                item-title="userTypeDescription" item-value="_id"
                                                                 required>
                                                             </v-select>
                                                         </v-col>
                                                     </v-row>
-                                                <v-card-actions>
-                                                    <v-spacer></v-spacer>
-                                                    <v-btn color="blue-darken-1" variant="text"
-                                                        @click="closeSaveUserModal">
-                                                        Cancel
-                                                    </v-btn>
-                                                    <v-btn type="submit" color="blue-darken-1" variant="text"
-                                                        @click="saveUser">
-                                                        Save
-                                                    </v-btn>
-                                                </v-card-actions>
-                                            </v-container>
-                                        </v-skeleton-loader>
-                                    </v-form>
-                                </v-card>
-                            </v-dialog>
+                                                    <v-card-actions>
+                                                        <v-spacer></v-spacer>
+                                                        <v-btn color="blue-darken-1" variant="text"
+                                                            @click="closeSaveUserModal">
+                                                            Cancel
+                                                        </v-btn>
+                                                        <v-btn type="submit" color="blue-darken-1" variant="text"
+                                                            @click="saveUser">
+                                                            Save
+                                                        </v-btn>
+                                                    </v-card-actions>
+                                                </v-container>
+                                            </v-skeleton-loader>
+                                        </v-form>
+                                    </v-card>
+                                </v-dialog>
 
-                            <v-dialog v-model="statusDialog" max-width="640px">
-                                <v-card>
-                                    <v-card-title class="text-h5">Are you sure you want to {{ selectedUser.isActive
-                                        ?
-                                        'disable' : 'enable' }}
-                                        the user {{ selectedUser.name }}?</v-card-title>
-                                    <v-card-actions>
-                                        <v-spacer></v-spacer>
-                                        <v-btn color="blue-darken-1" variant="text"
-                                            @click="closeChangeUserStatusModal">Cancel</v-btn>
-                                        <v-btn color="blue-darken-1" variant="text"
-                                            @click="saveUserStatus">OK</v-btn>
-                                        <v-spacer></v-spacer>
-                                    </v-card-actions>
-                                </v-card>
-                            </v-dialog>
-                        </v-toolbar>
-                    </template>
-                    <template v-slot:item.isActive="{ value }">
-                        <v-chip density="compact" size="small" :color="value ? 'green' : 'red'">
-                            {{ value ? 'ACTIVE' : 'INACTIVE' }}
-                        </v-chip>
-                    </template>
-                    <template v-slot:item.actions="{ item }: any">
-                        <v-tooltip text="Edit" location="top">
-                            <template v-slot:activator="{ props }">
-                                <v-icon v-bind="props" class="me-2" color="info" size="small"
-                                    @click="openSaveUserModal(item)">
-                                    mdi-pencil
-                                </v-icon>
-                            </template>
-                        </v-tooltip>
-                        <v-tooltip text="Enable" location="top" v-if="!item.isActive">
-                            <template v-slot:activator="{ props }">
-                                <v-icon v-bind="props" color="success" class="me-2" size="small"
-                                    @click="openChangeUserStatusModal(item)">
-                                    mdi-check-circle-outline
-                                </v-icon>
-                            </template>
-                        </v-tooltip>
-                        <v-tooltip text="Disable" location="top" v-if="item.isActive">
-                            <template v-slot:activator="{ props }">
-                                <v-icon v-bind="props" color="red" class="me-2" size="small"
-                                    @click="openChangeUserStatusModal(item)">
-                                    mdi-cancel
-                                </v-icon>
-                            </template>
-                        </v-tooltip>
-                    </template>
-                    <template v-slot:no-data>
-                        <div v-if="getUsersServiceError">
-                            <v-container>
-                                <v-icon color="grey" size="100">mdi-alert-circle-outline</v-icon>
-                                <p class="my-3">An error occurred. Try again later.</p>
-                                <v-btn color="primary" size="small" @click="init()">
-                                    Retry
-                                </v-btn>
-                            </v-container>
-                        </div>
-                        <div v-else-if="search">
-                            <v-container>
-                                <p class="mb-3">No matches found for: <b>{{ search }}</b>.</p>
-                                <v-btn color="primary" @click="init()">
-                                    Reset
-                                </v-btn>
-                            </v-container>
-                        </div>
-                        <div v-else>
-                            <v-container>
-                                <p>You have to create users in order to see them in this list.</p>
-                            </v-container>
-                        </div>
-                    </template>
-                </v-data-table>
-            </v-skeleton-loader>
+                                <v-dialog v-model="statusDialog" max-width="640px">
+                                    <v-card>
+                                        <v-card-title class="text-h5">Are you sure you want to {{ selectedUser.isActive
+                                            ?
+                                            'disable' : 'enable' }}
+                                            the user {{ selectedUser.name }}?</v-card-title>
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn color="blue-darken-1" variant="text"
+                                                @click="closeChangeUserStatusModal">Cancel</v-btn>
+                                            <v-btn color="blue-darken-1" variant="text"
+                                                @click="saveUserStatus">OK</v-btn>
+                                            <v-spacer></v-spacer>
+                                        </v-card-actions>
+                                    </v-card>
+                                </v-dialog>
+                            </v-toolbar>
+                        </template>
+                        <template v-slot:item.isActive="{ value }">
+                            <v-chip density="compact" size="small" :color="value ? 'green' : 'red'">
+                                {{ value ? 'ACTIVE' : 'INACTIVE' }}
+                            </v-chip>
+                        </template>
+                        <template v-slot:item.actions="{ item }: any">
+                            <v-tooltip text="Edit" location="top">
+                                <template v-slot:activator="{ props }">
+                                    <v-icon v-bind="props" class="me-2" color="info" size="small"
+                                        @click="openSaveUserModal(item)">
+                                        mdi-pencil
+                                    </v-icon>
+                                </template>
+                            </v-tooltip>
+                            <v-tooltip text="Enable" location="top" v-if="!item.isActive">
+                                <template v-slot:activator="{ props }">
+                                    <v-icon v-bind="props" color="success" class="me-2" size="small"
+                                        @click="openChangeUserStatusModal(item)">
+                                        mdi-check-circle-outline
+                                    </v-icon>
+                                </template>
+                            </v-tooltip>
+                            <v-tooltip text="Disable" location="top" v-if="item.isActive">
+                                <template v-slot:activator="{ props }">
+                                    <v-icon v-bind="props" color="red" class="me-2" size="small"
+                                        @click="openChangeUserStatusModal(item)">
+                                        mdi-cancel
+                                    </v-icon>
+                                </template>
+                            </v-tooltip>
+                        </template>
+                        <template v-slot:no-data>
+                            <div v-if="getUsersServiceError">
+                                <v-container>
+                                    <v-icon color="grey" size="100">mdi-alert-circle-outline</v-icon>
+                                    <p class="my-3">An error occurred. Try again later.</p>
+                                    <v-btn color="primary" size="small" @click="init()">
+                                        Retry
+                                    </v-btn>
+                                </v-container>
+                            </div>
+                            <div v-else-if="search">
+                                <v-container>
+                                    <p class="mb-3">No matches found for: <b>{{ search }}</b>.</p>
+                                    <v-btn color="primary" @click="init()">
+                                        Reset
+                                    </v-btn>
+                                </v-container>
+                            </div>
+                            <div v-else>
+                                <v-container>
+                                    <p>You have to create users in order to see them in this list.</p>
+                                </v-container>
+                            </div>
+                        </template>
+                    </v-data-table>
+                </v-skeleton-loader>
+            </v-card>
         </v-card>
     </v-container>
 </template>

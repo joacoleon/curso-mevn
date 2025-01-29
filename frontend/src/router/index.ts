@@ -5,6 +5,7 @@ import Home from '@/components/Home.vue'
 import Category from '@/components/Category.vue'
 import User from '@/components/User.vue'
 import PageNotFound from '@/components/PageNotFound.vue'
+import ChangePassword from '@/components/ChangePassword.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -18,7 +19,16 @@ const router = createRouter({
       }
     },
     {
+      path: '/changePassword',
+      name: 'changePassword',
+      component: ChangePassword,
+      meta: {
+        changePassword: true
+      }
+    },
+    {
       path: '/',
+      alias: '/home',
       name: 'home',
       component: Home,
       meta: {
@@ -45,7 +55,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/:pathMatch(.*)', //TODO -> Ver de agregar una pantalla indicando que la pagina no existe
+      path: '/:pathMatch(.*)?',
       name: '404',
       component: PageNotFound,
       meta: {
@@ -55,23 +65,37 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, from, next) => { // TODO -> Allow all users to change their passwords
   const authStore = useAuthStore();
-  //authStore.overlay = false; //Si cambio de pantalla cuando se estaba llamando un servicio, saco el overlay
-
   if (to.matched.some(record => record.meta.all)) {
     next();
-  } else if (authStore.user && authStore.user.role.userTypeDescription == 'Admin') {
-    if (to.matched.some(record => record.meta.admin)) {
-      next();
-    }
-  } else if (authStore.user && authStore.user.role.userTypeDescription == 'Sales') {
-    if (to.matched.some(record => record.meta.sales)) {
-      next();
-    }
-  } else if (authStore.user && authStore.user.role.userTypeDescription == 'Storage') {
-    if (to.matched.some(record => record.meta.storage)) {
-      next();
+  } else if (authStore.user) {
+    if (authStore.user.hasDefaultPassword) {
+      if (to.matched.some(record => record.meta.changePassword)) {
+        next();
+      } else {
+        next({ name: 'changePassword' })
+      }
+    } else {
+      if (authStore.user.role.userTypeDescription == 'Admin') {
+        if (to.matched.some(record => record.meta.admin)) {
+          next();
+        } else {
+          next({ name: '404' })
+        }
+      } else if (authStore.user.role.userTypeDescription == 'Sales') {
+        if (to.matched.some(record => record.meta.sales)) {
+          next();
+        } else {
+          next({ name: '404' })
+        }
+      } else if (authStore.user.role.userTypeDescription == 'Storage') {
+        if (to.matched.some(record => record.meta.storage)) {
+          next();
+        } else {
+          next({ name: '404' })
+        }
+      }
     }
   } else {
     next({ name: 'login' })

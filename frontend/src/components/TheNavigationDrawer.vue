@@ -9,6 +9,9 @@
         </v-list>
         <template v-slot:append>
           <div class="pa-2">
+            <v-btn variant="tonal" class="mb-2" block @click="copyToken()">
+              Copy Token
+            </v-btn>
             <v-btn variant="tonal" block @click="authStore.logout()">
               Logout
             </v-btn>
@@ -23,6 +26,15 @@ import { useAuthStore } from '@/stores/AuthStore';
 
 const authStore = useAuthStore();
 const selected = ref([]);
+
+function copyToken() {
+  var text = document.createElement("textarea");
+      document.body.appendChild(text);
+      text.value = authStore.token;
+      text.select();
+      document.execCommand("copy");
+      document.body.removeChild(text);
+}
 
 const isAdmin = computed(() => {
   return authStore.user && authStore.user.role.userTypeDescription == 'Admin';

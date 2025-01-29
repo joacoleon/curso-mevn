@@ -26,7 +26,7 @@
             <v-row>
                 <v-col class="text-center">
                     <v-icon size="100">mdi-alert-circle-outline</v-icon>
-                    <h1>Ops, the page doesnt exist!</h1>
+                    <h2>Oops, the page doesnt exist or you dont have permission to see it!</h2>
                 </v-col>
             </v-row>
         </v-card>

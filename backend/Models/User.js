@@ -10,6 +10,7 @@ const userSchema = new Schema({
     email: {type: String, maxlength: 50, unique: true, required: true},
     password: {type: String, maxlength: 64, required: true},
     isActive: {type: Boolean, default: true},
+    hasDefaultPassword: {type: Boolean, default: true},
     createdAt: {type: Date, default: Date.now}
 });
 

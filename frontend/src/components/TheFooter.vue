@@ -1,5 +1,5 @@
 <template>
-    <v-footer app color="#FFFFFF" border elevation="24">
+    <v-footer app absolute color="#FFFFFF" border elevation="24">
         <v-row justify="center" no-gutters>
             <v-btn v-for="link in links" :key="link" class="mx-2" rounded="xl" variant="text">
                 {{ link }}

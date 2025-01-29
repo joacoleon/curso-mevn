@@ -7,17 +7,23 @@ export const useAuthStore = defineStore('authStore', () => {
     const user = ref();
     const token = ref();
 
-    function saveToken(newToken: any) {
-        user.value = jwtDecode(newToken);
+    function saveToken(newToken: any, newUser: any) { //Le paso el usuario para setear si tiene default password o no
+        user.value = newUser;
         token.value = newToken;
         localStorage.setItem("token", newToken);
+        localStorage.setItem("hasDefaultPassword", user.value.hasDefaultPassword);
     }
 
-    function autoLogin() {
+    function autoLogin() { //Revisar aca, se pierde el booleano
         let savedToken = localStorage.getItem("token");
         if (savedToken) {
             user.value = jwtDecode(savedToken);
-            token.value = savedToken;
+            user.value.hasDefaultPassword = localStorage.getItem("hasDefaultPassword") === "true" ? true : false;
+            if (Date.now() >= user.value.exp * 1000) { //Si el token expiro
+                logout();
+            } else {
+                token.value = savedToken;
+            }
         }
     }
 
@@ -25,6 +31,7 @@ export const useAuthStore = defineStore('authStore', () => {
         user.value = "";
         token.value = "";
         localStorage.removeItem("token");
+        localStorage.removeItem("hasDefaultPassword");
         router.push({ name: 'login' });
     }
 

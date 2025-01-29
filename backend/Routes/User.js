@@ -13,5 +13,6 @@ router.put('/update', Auth.isAdmin, controller.update);
 router.delete('/remove', Auth.isAdmin, controller.remove);
 router.put('/activate', Auth.isAdmin, controller.activate);
 router.put('/deactivate', Auth.isAdmin, controller.deactivate);
+router.put('/changePassword', Auth.isUser, controller.changePassword);
 
 export default router;
