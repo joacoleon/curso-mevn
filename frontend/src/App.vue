@@ -5,13 +5,14 @@
         <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
         <v-app-bar-title>MEVN APP</v-app-bar-title>
       </v-app-bar>
-      <Footer></Footer>
-      <NavigationDrawer v-model="drawer"></NavigationDrawer>
+      
+      <NavigationDrawer :model-value="drawer" @update:model-value="drawer = $event"></NavigationDrawer>
     </div>
 
     <v-main app>
       <RouterView />
     </v-main>
+    <Footer></Footer>
 
     <FeedbackSnackbar :snackbar="snackbarStore.snackbar"></FeedbackSnackbar> 
   </v-app>

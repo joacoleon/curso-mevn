@@ -24,7 +24,7 @@ async function checkToken(token) {
 
 export default {
     encode: async (_id, email, role) => {
-        const token = jwt.sign({ _id: _id, email: email, role: role }, clientSecret, { expiresIn: '24h' });
+        const token = jwt.sign({  _id, email, role }, clientSecret, { expiresIn: '24h' });
         return token;
     },
 

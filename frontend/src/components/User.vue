@@ -8,8 +8,7 @@
                 </template>
             </v-breadcrumbs>
             <v-card>
-                <v-skeleton-loader :loading="isLoading" height="545" type="list-item, table-tbody, table-tfoot"
-                    class="pa-3">
+                <v-skeleton-loader :loading="isLoading" height="545" type="list-item, table-tbody, table-tfoot">
                     <v-data-table :headers="headers" :items="users" :search="search"
                         :sort-by="[{ key: 'name', order: 'asc' }]">
                         <template v-slot:top>
